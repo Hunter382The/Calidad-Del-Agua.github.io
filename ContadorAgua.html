@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador de Ahorro de Agua</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .water-widget {
+            background: #007bff;
+            color: #fff;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 350px; /* Aumenta un poco el ancho */
+            margin-bottom: 20px;
+        }
+
+        .water-widget h2 {
+            margin: 0 0 10px;
+        }
+
+        .water-widget p {
+            margin: 5px 0;
+        }
+
+        .actions {
+            display: grid; /* Usa grid para mejor disposición */
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Ajusta el ancho mínimo según necesites */
+            gap: 10px; /* Espacio entre botones */
+        }
+
+        .actions button {
+            background: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            width: 100%; /* Ocupa todo el ancho de la celda */
+            box-sizing: border-box; /* Incluye el padding en el ancho */
+        }
+
+        .actions button:hover {
+            background: #218838;
+        }
+
+        .footer {
+            background: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+            margin-top: auto; /* Empuja el footer hacia abajo */
+        }
+
+        /* Estilos para el modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="water-widget">
+        <h2>Contador de Ahorro de Agua</h2>
+        <p>Consumo total de agua: <span id="water-usage">100</span> L</p>
+        <p>Gasto promedio diario: <span id="daily-average">50</span> L</p>
+        <p>Agua total ahorrada: <span id="total-saved">0</span> L</p>
+        <div class="actions">
+            </div>
+    </div>
+
+    <footer id="footer" class="footer dark-background">
+        </footer>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modal-message"></p>
+        </div>
+    </div>
+
+    <script>
+        let waterUsage = 100;
+        let dailyAverage = 50;
+        let totalSaved = 0;
+        const actionsDiv = document.querySelector('.actions');
+        const modal = document.getElementById("myModal");
+        const modalMessage = document.getElementById("modal-message");
+        const span = document.getElementsByClassName("close")[0];
+
+        const waterSavingActions = [
+            { description: "Cerré el grifo mientras me lavaba los dientes", amount: 5 },
+            { description: "Usé un balde en lugar de una manguera", amount: 10 },
+            { description: "Reparé una fuga de agua", amount: 15 },
+            { description: "Tomé una ducha corta", amount: 8 },
+            { description: "Recogí agua de lluvia", amount: 12 },
+            { description: "Lavé el carro con cubeta", amount: 20 },
+            { description: "Reutilicé agua de lavar frutas", amount: 6 },
+            { description: "Descongelé sin agua corriente", amount: 4 },
+            { description: "Instalé dispositivos ahorradores", amount: 25 },
+            { description: "Reporté una fuga", amount: 10 },
+            {description: "Regué las plantas por la mañana", amount: 7},
+            {description: "Lave la ropa con carga completa", amount: 18}
+        ];
+
+        waterSavingActions.forEach(action => {
+            const button = document.createElement('button');
+            button.textContent = `${action.description} (-${action.amount}L)`;
+            button.addEventListener('click', () => saveWater(action.amount, action.description));
+            actionsDiv.appendChild(button);
+        });
+
+        function saveWater(amount, description) {
+            waterUsage -= amount;
+            dailyAverage = ((dailyAverage * 2 - amount) / 2).toFixed(2);
+            totalSaved += amount;
+            document.getElementById('water-usage').textContent = waterUsage >= 0 ? waterUsage : 0;
+            document.getElementById('daily-average').textContent = dailyAverage >= 0 ? dailyAverage : 0;
+            document.getElementById('total-saved').textContent = totalSaved;
+
+            // Mostrar mensaje en el modal
+            modalMessage.textContent = `¡Acción registrada! Has ahorrado ${amount}L de agua al ${description}.`;
+            modal.style.display = "block";
+        }
+
+        // Cerrar el modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+
+</html>
